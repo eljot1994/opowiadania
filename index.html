@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Opowiadania</title>
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    display: flex;
+    height: 100vh;
+    background: #fefefe;
+    color: #111;
+  }
+  #sidebar {
+    width: 260px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    background: #fafafa;
+  }
+  #sidebar h2 {
+    margin: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.3rem;
+  }
+  #story-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #story-list li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.15s;
+  }
+  #story-list li:hover {
+    background-color: #ddd;
+  }
+  #story-list li.active {
+    background-color: #bbb;
+    font-weight: bold;
+  }
+  #content {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    overflow-y: auto;
+  }
+  #content h1 {
+    margin-top: 0;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  #content .date {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  #content pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    line-height: 1.5;
+    font-size: 1.1rem;
+  }
+  @media (max-width: 600px) {
+    body {
+      flex-direction: column;
+    }
+    #sidebar {
+      width: 100%;
+      height: 160px;
+      border-right: none;
+      border-bottom: 1px solid #ccc;
+    }
+    #content {
+      height: calc(100vh - 160px);
+      padding: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <nav id="sidebar">
+    <h2>Opowiadania</h2>
+    <ul id="story-list"></ul>
+  </nav>
+
+  <main id="content">
+    <h1 id="story-title">Ładowanie...</h1>
+    <div class="date" id="story-date"></div>
+    <pre id="story-text"></pre>
+  </main>
+
+<script>
+  // Przykładowe opowiadania — w praktyce możesz rozbudować tę listę
+  const stories = [
+    {
+      id: 1,
+      title: "Cień na ścianie",
+      date: "2025-07-10",
+      content: `Wieczorny cień padał na starą ścianę domu.  
+W ciszy słychać było tylko szelest liści i oddech wiatru.
+
+Nagle, zza rogu, wyłoniła się postać...`
+    },
+    {
+      id: 2,
+      title: "Powrót do domu",
+      date: "2025-07-14",
+      content: `Droga powrotna była dłuższa niż się spodziewałem.  
+Miasto tonęło w złotym blasku zachodzącego słońca, a ja szedłem w milczeniu.
+
+Wszystko wydawało się inne, a jednak znajome...`
+    },
+    {
+      id: 3,
+      title: "Nieznajomy w deszczu",
+      date: "2025-07-15",
+      content: `Deszcz spływał po oknach kawiarni, zamazując świat na zewnątrz.  
+W kącie siedział nieznajomy, którego twarz skrywał kaptur.
+
+Jego oczy jednak mówiły więcej niż tysiąc słów...`
+    }
+  ];
+
+  // Sortujemy opowiadania po dacie malejąco (najnowsze na początku)
+  stories.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const listEl = document.getElementById("story-list");
+  const titleEl = document.getElementById("story-title");
+  const dateEl = document.getElementById("story-date");
+  const textEl = document.getElementById("story-text");
+
+  function renderStoryList() {
+    stories.forEach((story, index) => {
+      const li = document.createElement("li");
+      li.textContent = story.title;
+      li.dataset.id = story.id;
+      li.addEventListener("click", () => {
+        setActiveStory(story.id);
+      });
+      listEl.appendChild(li);
+    });
+  }
+
+  function setActiveStory(id) {
+    const story = stories.find(s => s.id === id);
+    if (!story) return;
+
+    // Aktualizuj treść
+    titleEl.textContent = story.title;
+    dateEl.textContent = formatDate(story.date);
+    textEl.textContent = story.content;
+
+    // Podświetl aktywne w menu
+    Array.from(listEl.children).forEach(li => {
+      li.classList.toggle("active", li.dataset.id == id);
+    });
+  }
+
+  function formatDate(dateStr) {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const dateObj = new Date(dateStr);
+    return dateObj.toLocaleDateString("pl-PL", options);
+  }
+
+  // Inicjalizacja
+  renderStoryList();
+  if (stories.length) {
+    setActiveStory(stories[0].id); // pokaz najnowsze
+  } else {
+    titleEl.textContent = "Brak opowiadań";
+    dateEl.textContent = "";
+    textEl.textContent = "";
+  }
+</script>
+</body>
+</html>

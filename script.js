@@ -218,7 +218,7 @@ searchMode.addEventListener('change', () => {
 
 
 // Pobranie wierszy
-fetch('./poems.json')
+fetch('./stories.json')
   .then(response => response.json())
   .then(data => {
     poems = data.filter(poem =>

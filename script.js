@@ -1,12 +1,12 @@
-let poems = [];
-let filteredPoems = [];
+let stories = [];
+let filteredStories = [];
 let currentIndex = 0;
 
-const poemList = document.getElementById('poem-list');
-const poemContainer = document.querySelector('.poem-container');
-const prevPoemBtn = document.getElementById('prevPoemBtn');
-const nextPoemBtn = document.getElementById('nextPoemBtn');
-const searchInput = document.getElementById('poemSearch');
+const storyList = document.getElementById('story-list');
+const storyContainer = document.querySelector('.story-container');
+const prevStoryBtn = document.getElementById('prevStoryBtn');
+const nextStoryBtn = document.getElementById('nextStoryBtn');
+const searchInput = document.getElementById('storySearch');
 const searchMode = document.getElementById('searchMode');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
 const author = "Jarosław Derda";
@@ -35,18 +35,18 @@ function highlight(text) {
   return text.replace(regex, '<mark class="bg-amber-200 dark:bg-amber-600 text-black dark:text-white rounded px-1">$1</mark>');
 }
 
-// Rysowanie listy wierszy
-function renderPoemList() {
-  poemList.innerHTML = '';
-  filteredPoems.sort((a, b) => new Date(b.date) - new Date(a.date));
+// Rysowanie listy opowiadań
+function renderStoryList() {
+  storyList.innerHTML = '';
+  filteredStories.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const monthGroups = new Map();
-  const currentPoemMonth = formatMonthHeader(filteredPoems[currentIndex]?.date);
+  const currentStoryMonth = formatMonthHeader(filteredStories[currentIndex]?.date);
 
-  filteredPoems.forEach((poem, index) => {
-    const poemMonth = formatMonthHeader(poem.date);
+  filteredStories.forEach((story, index) => {
+    const storyMonth = formatMonthHeader(story.date);
 
-    if (!monthGroups.has(poemMonth)) {
+    if (!monthGroups.has(storyMonth)) {
       const groupWrapper = document.createElement('div');
       groupWrapper.classList.add('month-group');
 
@@ -54,12 +54,12 @@ function renderPoemList() {
       monthHeader.className = 'month-header flex items-center gap-2 cursor-pointer';
 
       const icon = document.createElement('i');
-      icon.className = poemMonth === currentPoemMonth
+      icon.className = storyMonth === currentStoryMonth
         ? 'fas fa-chevron-down text-inherit text-sm w-5 text-center inline-block align-middle'
         : 'fas fa-chevron-right text-inherit text-sm w-5 text-center inline-block align-middle';
 
       const title = document.createElement('span');
-      title.textContent = poemMonth;
+      title.textContent = storyMonth;
 
       monthHeader.appendChild(icon);
       monthHeader.appendChild(title);
@@ -71,28 +71,28 @@ function renderPoemList() {
           : 'fas fa-chevron-down text-inherit text-sm w-5 text-center inline-block align-middle';
       });
 
-      if (poemMonth !== currentPoemMonth) {
+      if (storyMonth !== currentStoryMonth) {
         groupWrapper.classList.add('collapsed');
       }
 
       groupWrapper.appendChild(monthHeader);
-      poemList.appendChild(groupWrapper);
-      monthGroups.set(poemMonth, groupWrapper);
+      storyList.appendChild(groupWrapper);
+      monthGroups.set(storyMonth, groupWrapper);
     }
 
-    const group = monthGroups.get(poemMonth);
-    const poemItem = document.createElement('div');
-    poemItem.className = `sidebar-item ${index === currentIndex ? 'bg-active' : ''}`;
-    poemItem.dataset.index = index;
-    poemItem.innerHTML = `<div class="text-active">${formatDate(poem.date)}</div>`;
+    const group = monthGroups.get(storyMonth);
+    const storyItem = document.createElement('div');
+    storyItem.className = `sidebar-item ${index === currentIndex ? 'bg-active' : ''}`;
+    storyItem.dataset.index = index;
+    storyItem.innerHTML = `<div class="text-active">${formatDate(story.date)}</div>`;
 
-    poemItem.addEventListener('click', () => {
+    storyItem.addEventListener('click', () => {
       currentIndex = index;
-      renderCurrentPoem();
+      renderCurrentStory();
       updateSidebarActiveItem();
     });
 
-    group.appendChild(poemItem);
+    group.appendChild(storyItem);
   });
 
   // Usuwamy puste miesiące
@@ -104,30 +104,30 @@ function renderPoemList() {
   });
 }
 
-// Wyświetlanie wiersza
-function renderCurrentPoem() {
-  if (!filteredPoems[currentIndex]) return;
+// Wyświetlanie opowiadania
+function renderCurrentStory() {
+  if (!filteredStories[currentIndex]) return;
 
-  poemContainer.innerHTML = '';
+  storyContainer.innerHTML = '';
 
-  const poem = filteredPoems[currentIndex];
-  const poemElement = document.createElement('div');
-  poemElement.className = 'poem p-8 md:p-12 flex flex-col justify-center';
+  const story = filteredStories[currentIndex];
+  const storyElement = document.createElement('div');
+  storyElement.className = 'story p-8 md:p-12 flex flex-col justify-center';
 
-  poemElement.innerHTML = `
-    <div class="poem-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(poem.date)}</div>
-    ${poem.subdate ? `<div class="text-sm italic text-gray-400 mb-3">${poem.subdate}</div>` : ''}
-${poem.title ? `<div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(poem.title)}</div>` : ''}
+  storyElement.innerHTML = `
+    <div class="story-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(story.date)}</div>
+    ${story.subdate ? `<div class="text-sm italic text-gray-400 mb-3">${story.subdate}</div>` : ''}
+${story.title ? `<div class="story-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(story.title)}</div>` : ''}
     <div class="text-lg md:text-xl font-serif leading-relaxed max-w-2xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
-      ${highlight(poem.content)}
+      ${highlight(story.content)}
     </div>
     <div class="text-sm text-gray-400 mt-6 text-right max-w-2xl mx-auto italic">— ${author}</div>
   `;
 
-  poemContainer.appendChild(poemElement);
-  poemContainer.scrollTo(0, 0);
+  storyContainer.appendChild(storyElement);
+  storyContainer.scrollTo(0, 0);
   if (window.MathJax) {
-    MathJax.typesetPromise([poemContainer]);
+    MathJax.typesetPromise([storyContainer]);
   }
 }
 
@@ -138,18 +138,18 @@ function updateSidebarActiveItem() {
 }
 
 // Nawigacja
-prevPoemBtn.addEventListener('click', () => {
+prevStoryBtn.addEventListener('click', () => {
   if (currentIndex > 0) {
     currentIndex--;
-    renderCurrentPoem();
+    renderCurrentStory();
     updateSidebarActiveItem();
   }
 });
 
-nextPoemBtn.addEventListener('click', () => {
-  if (currentIndex < filteredPoems.length - 1) {
+nextStoryBtn.addEventListener('click', () => {
+  if (currentIndex < filteredStories.length - 1) {
     currentIndex++;
-    renderCurrentPoem();
+    renderCurrentStory();
     updateSidebarActiveItem();
   }
 });
@@ -159,12 +159,12 @@ function runSearch() {
   const query = searchInput.value.toLowerCase().trim();
 
   if (!query || query.length < 2) {
-    filteredPoems = [...poems];
+    filteredStories = [...stories];
     const today = new Date().toISOString().slice(0, 10);
-    const todayIndex = poems.findIndex(poem => poem.date === today);
+    const todayIndex = stories.findIndex(story => story.date === today);
     currentIndex = todayIndex !== -1 ? todayIndex : 0;
-    renderPoemList();
-    renderCurrentPoem();
+    renderStoryList();
+    renderCurrentStory();
     return;
   }
 
@@ -175,17 +175,16 @@ function runSearch() {
 
   const queryRegex = new RegExp(pattern, 'i');
 
-  filteredPoems = poems.filter(poem =>
-    queryRegex.test(formatDate(poem.date)) ||
-    (poem.title && queryRegex.test(poem.title)) ||
-    (poem.content && queryRegex.test(poem.content))
+  filteredStories = stories.filter(story =>
+    queryRegex.test(formatDate(story.date)) ||
+    (story.title && queryRegex.test(story.title)) ||
+    (story.content && queryRegex.test(story.content))
   );
 
   currentIndex = 0;
-  renderPoemList();
-  renderCurrentPoem();
+  renderStoryList();
+  renderCurrentStory();
 }
-
 
 searchInput.addEventListener('input', () => {
   clearSearchBtn.classList.toggle('hidden', searchInput.value.trim().length === 0);
@@ -203,12 +202,12 @@ clearSearchBtn.addEventListener('click', clearSearch);
 function clearSearch() {
   searchInput.value = '';
   clearSearchBtn.classList.add('hidden');
-  filteredPoems = [...poems];
+  filteredStories = [...stories];
   const today = new Date().toISOString().slice(0, 10);
-  const todayIndex = poems.findIndex(poem => poem.date === today);
+  const todayIndex = stories.findIndex(story => story.date === today);
   currentIndex = todayIndex !== -1 ? todayIndex : 0;
-  renderPoemList();
-  renderCurrentPoem();
+  renderStoryList();
+  renderCurrentStory();
 }
 searchMode.addEventListener('change', () => {
   if (searchInput.value.trim().length >= 2) {
@@ -216,27 +215,26 @@ searchMode.addEventListener('change', () => {
   }
 });
 
-
-// Pobranie wierszy
+// Pobranie opowiadań
 fetch('./stories.json')
   .then(response => response.json())
   .then(data => {
-    poems = data.filter(poem =>
-      typeof poem.content === 'string' &&
-      poem.content.trim().length > 0
+    stories = data.filter(story =>
+      typeof story.content === 'string' &&
+      story.content.trim().length > 0
     );
 
-    if (poems.length === 0) {
-      poemList.innerHTML = '<div class="p-4 text-sm text-gray-500">Brak dostępnych wierszy.</div>';
-      poemContainer.innerHTML = '';
+    if (stories.length === 0) {
+      storyList.innerHTML = '<div class="p-4 text-sm text-gray-500">Brak dostępnych opowiadań.</div>';
+      storyContainer.innerHTML = '';
       return;
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    const todayIndex = poems.findIndex(poem => poem.date === today);
+    const todayIndex = stories.findIndex(story => story.date === today);
     currentIndex = todayIndex !== -1 ? todayIndex : 0;
 
-    filteredPoems = [...poems];
-    renderPoemList();
-    renderCurrentPoem();
+    filteredStories = [...stories];
+    renderStoryList();
+    renderCurrentStory();
   });

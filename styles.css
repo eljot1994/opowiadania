@@ -1,16 +1,16 @@
-.poem {
+.story {
   min-height: calc(100vh - 8rem);
 }
 
 /* Scrollbar dla sidebaru */
-#poem-list::-webkit-scrollbar {
+#story-list::-webkit-scrollbar {
   width: 6px;
 }
-#poem-list::-webkit-scrollbar-thumb {
+#story-list::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
 }
-#poem-list {
+#story-list {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
@@ -23,23 +23,7 @@
   }
 }
 
-/* Styl dla nagłówka miesiąca w sidebarze */
-.month-header {
-  position: sticky;
-  top: 0;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #6b7280;
-  background-color: #f9fafb;
-  z-index: 10;
-}
-.dark .month-header {
-  background-color: #1f2937;
-  color: #9ca3af;
-}
-
-/* Styl dla elementów listy wierszy */
+/* Styl dla elementów listy opowiadań */
 .sidebar-item {
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -61,12 +45,24 @@
 .dark .sidebar-item.bg-active {
   background-color: #4b5563;
 }
+
 .month-group.collapsed .sidebar-item {
   display: none;
 }
-.month-header span:first-child {
-  width: 1.25em;
-  display: inline-block;
+
+.month-header {
+  position: sticky;
+  top: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  background-color: #f9fafb;
+  z-index: 10;
+}
+.dark .month-header {
+  background-color: #1f2937;
+  color: #9ca3af;
 }
 
 /* --- MOTYW POETYCKI --- */
@@ -113,14 +109,13 @@ html.theme-poetic mark {
 }
 
 html.theme-poetic body,
-html.theme-poetic .poem-container,
+html.theme-poetic .story-container,
 html.theme-poetic .sidebar-item,
 html.theme-poetic .month-header,
 html.theme-poetic .prose,
-html.theme-poetic .poem {
+html.theme-poetic .story {
   font-family: 'Cormorant Garamond', serif !important;
 }
-
 
 html.theme-light {
   background-color: #ffffff;
@@ -129,11 +124,11 @@ html.theme-light {
 }
 
 html.theme-light body,
-html.theme-light .poem-container,
+html.theme-light .story-container,
 html.theme-light .sidebar-item,
 html.theme-light .month-header,
 html.theme-light .prose,
-html.theme-light .poem {
+html.theme-light .story {
   background-color: #ffffff;
   color: #000000;
   font-family: 'Georgia', serif;
@@ -157,11 +152,7 @@ html.theme-light mark {
   color: #fff;
 }
 
-html.theme-poetic .poem {
-  font-family: 'Cormorant Garamond', serif !important;
-}
-
-html.theme-poetic .poem {
+html.theme-poetic .story {
   font-family: 'Cormorant Garamond', serif !important;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -170,11 +161,11 @@ html.theme-poetic .poem {
     rgba(100, 70, 40, 0.08) 26px
   );
   background-size: 100% 28px;
-  background-position-y: 4px; /* przesunięcie linii w dół */
+  background-position-y: 4px;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.theme-poetic .poem-date,
-.theme-poetic .poem-title {
+.theme-poetic .story-date,
+.theme-poetic .story-title {
   font-family: 'Cormorant Garamond', serif;
 }

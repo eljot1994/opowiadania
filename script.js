@@ -3,8 +3,7 @@ let filteredStories = [];
 let currentIndex = 0;
 
 const storyList = document.getElementById("story-list");
-// PONIŻEJ ZNAJDUJE SIĘ KLUCZOWA POPRAWKA:
-const storyContainer = document.querySelector(".story-container");
+const storyContainer = document.querySelector(".poem-container");
 const prevStoryBtn = document.getElementById("prevStoryBtn");
 const nextStoryBtn = document.getElementById("nextStoryBtn");
 const searchInput = document.getElementById("storySearch");
@@ -63,14 +62,14 @@ function renderCurrentStory() {
   storyContainer.innerHTML = "";
   const story = filteredStories[currentIndex];
   const storyElement = document.createElement("div");
-  storyElement.className = "poem p-8 md:p-12 flex flex-col justify-center";
+  storyElement.className = "story p-8 md:p-12 flex flex-col justify-center";
   storyElement.innerHTML = `
-    <div class="poem-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
+    <div class="story-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
       story.date
     )}</div>
     ${
       story.title
-        ? `<div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
+        ? `<div class="story-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
             story.title
           )}</div>`
         : ""

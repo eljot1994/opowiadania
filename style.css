@@ -1,4 +1,4 @@
-.poem {
+.story {
   min-height: calc(100vh - 8rem);
 }
 
@@ -95,10 +95,10 @@ html.theme-poetic mark {
 }
 
 html.theme-poetic body,
-html.theme-poetic .story-container, /* zmienione z .poem-container */
+html.theme-poetic .poem-container,
 html.theme-poetic .sidebar-item,
 html.theme-poetic .prose,
-html.theme-poetic .poem {
+html.theme-poetic .story {
   font-family: "Cormorant Garamond", serif !important;
 }
 
@@ -109,10 +109,10 @@ html.theme-light {
 }
 
 html.theme-light body,
-html.theme-light .story-container, /* zmienione z .poem-container */
+html.theme-light .poem-container,
 html.theme-light .sidebar-item,
 html.theme-light .prose,
-html.theme-light .poem {
+html.theme-light .story {
   background-color: #ffffff;
   color: #000000;
   font-family: "Georgia", serif;
@@ -131,11 +131,11 @@ html.theme-light mark {
   color: #fff;
 }
 
-html.theme-poetic .poem {
+html.theme-poetic .story {
   font-family: "Cormorant Garamond", serif !important;
 }
 
-html.theme-poetic .poem {
+html.theme-poetic .story {
   font-family: "Cormorant Garamond", serif !important;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -148,7 +148,7 @@ html.theme-poetic .poem {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.theme-poetic .poem-date,
-.theme-poetic .poem-title {
+.theme-poetic .story-date,
+.theme-poetic .story-title {
   font-family: "Cormorant Garamond", serif;
 }

@@ -27,10 +27,9 @@ function highlight(text) {
   );
 }
 
-// Rysowanie listy opowiadań (teraz po tytułach)
+// Rysowanie listy opowiadań po tytułach
 function renderStoryList() {
   storyList.innerHTML = "";
-  // Opcjonalnie sortuj alfabetycznie: filteredStories.sort((a, b) => a.title.localeCompare(b.title));
 
   filteredStories.forEach((story, index) => {
     const storyItem = document.createElement("div");
@@ -38,7 +37,6 @@ function renderStoryList() {
       index === currentIndex ? "bg-active" : ""
     }`;
     storyItem.dataset.index = index;
-    // Zamiast daty, wyświetlamy tytuł opowiadania
     storyItem.innerHTML = `<div class="text-active">${
       story.title || "Bez tytułu"
     }</div>`;
@@ -53,7 +51,7 @@ function renderStoryList() {
   });
 }
 
-// Wyświetlanie opowiadania
+// Wyświetlanie opowiadania (bez daty)
 function renderCurrentStory() {
   if (!filteredStories[currentIndex]) return;
 
@@ -61,12 +59,17 @@ function renderCurrentStory() {
 
   const story = filteredStories[currentIndex];
   const storyElement = document.createElement("div");
-  storyElement.className = "poem p-8 md:p-12 flex flex-col justify-center"; // Używam klasy .poem, by zachować style
+  storyElement.className = "poem p-8 md:p-12 flex flex-col justify-center";
 
+  // Usunięto linię z datą, zostaje tylko tytuł i treść
   storyElement.innerHTML = `
-    <div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
+    ${
       story.title
-    )}</div>
+        ? `<div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
+            story.title
+          )}</div>`
+        : ""
+    }
     <div class="text-lg md:text-xl font-serif leading-relaxed max-w-2xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
       ${highlight(story.content)}
     </div>
@@ -81,7 +84,7 @@ function renderCurrentStory() {
 }
 
 function updateSidebarActiveItem() {
-  document.querySelectorAll(".sidebar-item").forEach((item, index) => {
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
     item.classList.toggle(
       "bg-active",
       parseInt(item.dataset.index) === currentIndex
@@ -106,28 +109,22 @@ nextStoryBtn.addEventListener("click", () => {
   }
 });
 
-// Wyszukiwanie + reset
+// Wyszukiwanie
 function runSearch() {
   const query = searchInput.value.toLowerCase().trim();
 
   if (!query || query.length < 2) {
     filteredStories = [...stories];
-    currentIndex = 0;
-    renderStoryList();
-    renderCurrentStory();
-    return;
+  } else {
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = searchMode.checked ? `\\b${escaped}\\b` : escaped;
+    const queryRegex = new RegExp(pattern, "i");
+    filteredStories = stories.filter(
+      (story) =>
+        (story.title && queryRegex.test(story.title)) ||
+        (story.content && queryRegex.test(story.content))
+    );
   }
-
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const pattern = searchMode.checked ? `\\b${escaped}\\b` : escaped;
-
-  const queryRegex = new RegExp(pattern, "i");
-
-  filteredStories = stories.filter(
-    (story) =>
-      (story.title && queryRegex.test(story.title)) ||
-      (story.content && queryRegex.test(story.content))
-  );
 
   currentIndex = 0;
   renderStoryList();
@@ -143,9 +140,7 @@ searchInput.addEventListener("input", () => {
 });
 
 searchInput.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    clearSearch();
-  }
+  if (e.key === "Escape") clearSearch();
 });
 
 clearSearchBtn.addEventListener("click", clearSearch);
@@ -158,27 +153,28 @@ function clearSearch() {
   renderStoryList();
   renderCurrentStory();
 }
+
 searchMode.addEventListener("change", () => {
   if (searchInput.value.trim().length >= 2) {
     runSearch();
   }
 });
 
-// Pobranie opowiadań z nowego pliku
+// Pobranie opowiadań z pliku stories.json
 fetch("./stories.json")
   .then((response) => response.json())
   .then((data) => {
     stories = data.filter(
       (story) =>
-        typeof story.content === "string" &&
-        story.content.trim().length > 0 &&
         story.title &&
-        story.title.trim().length > 0
+        story.content &&
+        story.title.trim() &&
+        story.content.trim()
     );
 
     if (stories.length === 0) {
       storyList.innerHTML =
-        '<div class="p-4 text-sm text-gray-500">Brak dostępnych opowiadań.</div>';
+        '<div class="p-4 text-sm text-gray-500">Brak opowiadań.</div>';
       storyContainer.innerHTML = "";
       return;
     }

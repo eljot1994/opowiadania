@@ -11,6 +11,16 @@ const searchMode = document.getElementById("searchMode");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
 const author = "Jarosław Derda";
 
+// Przywrócona funkcja do formatowania daty
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("pl-PL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 function highlight(text) {
   if (!text) return "";
   const query = searchInput?.value.toLowerCase().trim();
@@ -27,7 +37,7 @@ function highlight(text) {
   );
 }
 
-// Rysowanie listy opowiadań po tytułach
+// Rysowanie listy opowiadań po tytułach (bez zmian)
 function renderStoryList() {
   storyList.innerHTML = "";
 
@@ -51,7 +61,7 @@ function renderStoryList() {
   });
 }
 
-// Wyświetlanie opowiadania (bez daty)
+// Wyświetlanie opowiadania (z dodaną datą)
 function renderCurrentStory() {
   if (!filteredStories[currentIndex]) return;
 
@@ -61,8 +71,11 @@ function renderCurrentStory() {
   const storyElement = document.createElement("div");
   storyElement.className = "poem p-8 md:p-12 flex flex-col justify-center";
 
-  // Usunięto linię z datą, zostaje tylko tytuł i treść
+  // DODANA linia wyświetlająca sformatowaną datę
   storyElement.innerHTML = `
+    <div class="poem-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
+      story.date
+    )}</div>
     ${
       story.title
         ? `<div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
@@ -164,8 +177,10 @@ searchMode.addEventListener("change", () => {
 fetch("./stories.json")
   .then((response) => response.json())
   .then((data) => {
+    // Zmieniony filtr, aby uwzględniał pole "date"
     stories = data.filter(
       (story) =>
+        story.date &&
         story.title &&
         story.content &&
         story.title.trim() &&

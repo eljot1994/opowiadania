@@ -74,18 +74,18 @@ function renderCurrentStory() {
   const storyElement = document.createElement("div");
   storyElement.className = "story p-8 md:p-12 flex flex-col justify-center";
   storyElement.innerHTML = `
-    <div class="story-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-2">${formatDate(
+    <div class="story-date text-l font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
       story.date
     )}</div>
-        <div class="text-sm text-gray-400 mb-2 text-left italic">${author}</div>
+        <div class="text-l text-gray-400 mb-1 text-left italic">${author}</div>
     ${
       story.title
-        ? `<div class="story-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
+        ? `<div class="story-title text-3xl font-serif text-gray-600 dark:text-gray-300 mb-4">${highlight(
             story.title
           )}</div>`
         : ""
     }
-    <div class="text-lg md:text-xl font-serif leading-relaxed max-w-2xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
+    <div class="text-lg md:text-xl font-serif leading-relaxed max-w-3xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
       ${highlight(formatContent(story.content))}
     </div>
 

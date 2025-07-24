@@ -9,9 +9,10 @@ const nextStoryBtn = document.getElementById("nextStoryBtn");
 const searchInput = document.getElementById("storySearch");
 const searchMode = document.getElementById("searchMode");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
-const author = "Jarosław Derda"; // Możesz zmienić autora
+const author = "Jarosław Derda";
 
 function highlight(text) {
+  if (!text) return "";
   const query = searchInput?.value.toLowerCase().trim();
   if (!query || query.length < 2) return text;
 
@@ -19,16 +20,17 @@ function highlight(text) {
   const pattern = searchMode.checked ? `\\b${escaped}\\b` : escaped;
 
   const regex = new RegExp(`(${pattern})`, "gi");
+
   return text.replace(
     regex,
     '<mark class="bg-amber-200 dark:bg-amber-600 text-black dark:text-white rounded px-1">$1</mark>'
   );
 }
 
-// Rysowanie listy opowiadań
+// Rysowanie listy opowiadań (teraz po tytułach)
 function renderStoryList() {
   storyList.innerHTML = "";
-  filteredStories.sort((a, b) => a.title.localeCompare(b.title)); // Sortowanie alfabetyczne
+  // Opcjonalnie sortuj alfabetycznie: filteredStories.sort((a, b) => a.title.localeCompare(b.title));
 
   filteredStories.forEach((story, index) => {
     const storyItem = document.createElement("div");
@@ -36,7 +38,10 @@ function renderStoryList() {
       index === currentIndex ? "bg-active" : ""
     }`;
     storyItem.dataset.index = index;
-    storyItem.innerHTML = `<div class="text-active">${story.title}</div>`;
+    // Zamiast daty, wyświetlamy tytuł opowiadania
+    storyItem.innerHTML = `<div class="text-active">${
+      story.title || "Bez tytułu"
+    }</div>`;
 
     storyItem.addEventListener("click", () => {
       currentIndex = index;
@@ -56,10 +61,10 @@ function renderCurrentStory() {
 
   const story = filteredStories[currentIndex];
   const storyElement = document.createElement("div");
-  storyElement.className = "story p-8 md:p-12 flex flex-col justify-center";
+  storyElement.className = "poem p-8 md:p-12 flex flex-col justify-center"; // Używam klasy .poem, by zachować style
 
   storyElement.innerHTML = `
-    <div class="story-title text-3xl font-serif text-gray-700 dark:text-gray-200 mb-6">${highlight(
+    <div class="poem-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
       story.title
     )}</div>
     <div class="text-lg md:text-xl font-serif leading-relaxed max-w-2xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
@@ -70,11 +75,17 @@ function renderCurrentStory() {
 
   storyContainer.appendChild(storyElement);
   storyContainer.scrollTo(0, 0);
+  if (window.MathJax) {
+    MathJax.typesetPromise([storyContainer]);
+  }
 }
 
 function updateSidebarActiveItem() {
   document.querySelectorAll(".sidebar-item").forEach((item, index) => {
-    item.classList.toggle("bg-active", index === currentIndex);
+    item.classList.toggle(
+      "bg-active",
+      parseInt(item.dataset.index) === currentIndex
+    );
   });
 }
 
@@ -153,7 +164,7 @@ searchMode.addEventListener("change", () => {
   }
 });
 
-// Pobranie opowiadań
+// Pobranie opowiadań z nowego pliku
 fetch("./stories.json")
   .then((response) => response.json())
   .then((data) => {
@@ -161,7 +172,7 @@ fetch("./stories.json")
       (story) =>
         typeof story.content === "string" &&
         story.content.trim().length > 0 &&
-        typeof story.title === "string" &&
+        story.title &&
         story.title.trim().length > 0
     );
 

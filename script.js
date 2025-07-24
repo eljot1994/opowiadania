@@ -11,6 +11,16 @@ const searchMode = document.getElementById("searchMode");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
 const author = "Jarosław Derda";
 
+function formatContent(content) {
+  if (content.includes("<br>") || content.includes("$")) {
+    return content;
+  }
+  return content
+    .split("\n")
+    .map((line) => (line.trim() === "" ? "<br>" : `<p>${line}</p>`))
+    .join("");
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("pl-PL", {
@@ -64,9 +74,10 @@ function renderCurrentStory() {
   const storyElement = document.createElement("div");
   storyElement.className = "story p-8 md:p-12 flex flex-col justify-center";
   storyElement.innerHTML = `
-    <div class="story-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
+    <div class="story-date text-2xl font-serif text-gray-700 dark:text-gray-200 mb-2">${formatDate(
       story.date
     )}</div>
+        <div class="text-sm text-gray-400 mb-2 text-left italic">${author}</div>
     ${
       story.title
         ? `<div class="story-title text-2xl font-serif text-gray-600 dark:text-gray-300 mb-6">${highlight(
@@ -75,9 +86,9 @@ function renderCurrentStory() {
         : ""
     }
     <div class="text-lg md:text-xl font-serif leading-relaxed max-w-2xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
-      ${highlight(story.content)}
+      ${highlight(formatContent(story.content))}
     </div>
-    <div class="text-sm text-gray-400 mt-6 text-right max-w-2xl mx-auto italic">— ${author}</div>
+
   `;
   storyContainer.appendChild(storyElement);
   storyContainer.scrollTo(0, 0);

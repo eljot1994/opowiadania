@@ -3,7 +3,8 @@ let filteredStories = [];
 let currentIndex = 0;
 
 const storyList = document.getElementById("story-list");
-const storyContainer = document.querySelector(".story-container"); // <-- TUTAJ BYŁ BŁĄD
+// PONIŻEJ ZNAJDUJE SIĘ KLUCZOWA POPRAWKA:
+const storyContainer = document.querySelector(".story-container");
 const prevStoryBtn = document.getElementById("prevStoryBtn");
 const nextStoryBtn = document.getElementById("nextStoryBtn");
 const searchInput = document.getElementById("storySearch");

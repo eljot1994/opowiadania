@@ -45,6 +45,19 @@ function highlight(text) {
   );
 }
 
+// Funkcja do generowania "slugów" z tytułów opowiadań
+function getStorySlug(title) {
+  if (!title) return "";
+  return title
+    .toLowerCase()
+    .normalize("NFD") // Normalizacja do formy dekompozycyjnej (np. "ó" -> "o")
+    .replace(/[\u0300-\u036f]/g, "") // Usunięcie znaków diakrytycznych
+    .replace(/[^\w\s-]/g, "") // Usunięcie znaków innych niż słowne, spacje, myślniki
+    .replace(/\s+/g, "-") // Zamiana spacji na myślniki
+    .replace(/--+/g, "-") // Usunięcie podwójnych myślników
+    .trim(); // Usunięcie białych znaków na początku i końcu
+}
+
 // Rysowanie listy opowiadań po tytułach
 function renderStoryList() {
   storyList.innerHTML = "";
@@ -54,13 +67,13 @@ function renderStoryList() {
       index === currentIndex ? "bg-active" : ""
     }`;
     storyItem.dataset.index = index;
+    storyItem.dataset.slug = getStorySlug(story.title); // Dodanie sluga jako atrybutu danych
     storyItem.innerHTML = `<div class="text-active">${
       story.title || "Bez tytułu"
     }</div>`;
     storyItem.addEventListener("click", () => {
-      currentIndex = index;
-      renderCurrentStory();
-      updateSidebarActiveItem();
+      // Zamiast bezpośredniego renderowania, zmieniamy hash URL
+      window.location.hash = getStorySlug(story.title);
     });
     storyList.appendChild(storyItem);
   });
@@ -95,6 +108,7 @@ function renderCurrentStory() {
   if (window.MathJax) {
     MathJax.typesetPromise([storyContainer]);
   }
+  updateSidebarActiveItem(); // Upewnij się, że element w sidebarze jest aktywny po renderowaniu
 }
 
 function updateSidebarActiveItem() {
@@ -110,15 +124,13 @@ function updateSidebarActiveItem() {
 prevStoryBtn.addEventListener("click", () => {
   if (currentIndex > 0) {
     currentIndex--;
-    renderCurrentStory();
-    updateSidebarActiveItem();
+    window.location.hash = getStorySlug(filteredStories[currentIndex].title);
   }
 });
 nextStoryBtn.addEventListener("click", () => {
   if (currentIndex < filteredStories.length - 1) {
     currentIndex++;
-    renderCurrentStory();
-    updateSidebarActiveItem();
+    window.location.hash = getStorySlug(filteredStories[currentIndex].title);
   }
 });
 
@@ -137,9 +149,10 @@ function runSearch() {
         (story.content && queryRegex.test(story.content))
     );
   }
-  currentIndex = 0;
-  renderStoryList();
-  renderCurrentStory();
+  currentIndex = 0; // Resetuj indeks po wyszukaniu
+  renderStoryList(); // Renderuj listę wyników wyszukiwania
+  renderCurrentStory(); // Wyświetl pierwsze opowiadanie z wyników
+  // Po wyszukiwaniu nie zmieniamy hasha URL automatycznie, aby użytkownik mógł dalej linkować do konkretnych opowiadań
 }
 
 searchInput.addEventListener("input", () => {
@@ -158,13 +171,43 @@ function clearSearch() {
   searchInput.value = "";
   clearSearchBtn.classList.add("hidden");
   filteredStories = [...stories];
-  currentIndex = 0;
+  // Po wyczyszczeniu wyszukiwania możemy przywrócić stan z hasha, jeśli istnieje
+  handleHashChange();
   renderStoryList();
   renderCurrentStory();
 }
 searchMode.addEventListener("change", () => {
   if (searchInput.value.trim().length >= 2) runSearch();
 });
+
+// Funkcja obsługująca zmianę hasha w URL
+function handleHashChange() {
+  const hash = window.location.hash.substring(1); // Usuń '#'
+  const targetSlug = getStorySlug(decodeURIComponent(hash)); // Pobierz sluga z hasha
+
+  let foundIndex = -1;
+  if (targetSlug) {
+    foundIndex = filteredStories.findIndex(
+      (story) => getStorySlug(story.title) === targetSlug
+    );
+  }
+
+  if (foundIndex !== -1) {
+    currentIndex = foundIndex;
+  } else {
+    // Jeśli hash jest pusty lub nie znaleziono opowiadania, wróć do pierwszego
+    currentIndex = 0;
+    // Jeśli hash był nieprawidłowy, możemy go usunąć z URL-a, aby nie wprowadzać w błąd
+    if (hash && hash !== getStorySlug(filteredStories[0].title)) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }
+  renderCurrentStory();
+  renderStoryList(); // Aktualizacja listy, aby podświetlić właściwy element
+}
+
+// Nasłuchiwanie na zmiany hasha w URL
+window.addEventListener("hashchange", handleHashChange);
 
 // Pobranie opowiadań
 fetch("./stories.json")
@@ -185,8 +228,11 @@ fetch("./stories.json")
       return;
     }
     stories.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sortowanie od najnowszych
-    currentIndex = 0;
     filteredStories = [...stories];
+
+    // Sprawdź hash URL po załadowaniu danych
+    handleHashChange();
+
     renderStoryList();
     renderCurrentStory();
   });

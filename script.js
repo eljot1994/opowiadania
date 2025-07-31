@@ -11,6 +11,17 @@ const searchMode = document.getElementById("searchMode");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
 const author = "Jarosław Derda";
 
+// Przeniesione zmienne i elementy DOM z index.html
+const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const html = document.documentElement;
+const themeIcon = document.getElementById("themeIcon");
+const toggleTheme = document.getElementById("toggleTheme");
+
+const themes = ["light", "poetic", "dark"];
+let currentThemeIndex = 0;
+
 function formatContent(content) {
   if (content.includes("<br>") || content.includes("$")) {
     return content;
@@ -209,6 +220,62 @@ function handleHashChange() {
 // Nasłuchiwanie na zmiany hasha w URL
 window.addEventListener("hashchange", handleHashChange);
 
+// Funkcje i zdarzenia związane z motywami i sidebar'em, przeniesione z index.html
+function setTheme(theme) {
+  html.classList.remove("dark", "theme-poetic", "theme-light");
+  if (theme === "dark") html.classList.add("dark");
+  if (theme === "poetic") html.classList.add("theme-poetic");
+  if (theme === "light") html.classList.add("theme-light");
+  localStorage.setItem("theme", theme);
+  updateThemeIcon(theme);
+}
+
+function updateThemeIcon(theme) {
+  if (theme === "light") {
+    themeIcon.className = "fas fa-sun"; // czarno-biały klasyczny
+  } else if (theme === "poetic") {
+    themeIcon.className = "fas fa-feather-alt"; // poetycki
+  } else {
+    themeIcon.className = "fas fa-moon"; // ciemny
+  }
+}
+
+function cycleTheme() {
+  currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+  setTheme(themes[currentThemeIndex]);
+}
+
+toggleTheme.addEventListener("click", cycleTheme);
+
+// Funkcja zapewniająca widoczność sidebara na starcie
+function ensureSidebarVisibility() {
+  if (window.innerWidth >= 768) {
+    sidebar.classList.remove("-translate-x-full");
+    overlay.classList.add("hidden"); // Upewnij się, że overlay jest ukryty
+  } else {
+    // Na mniejszych ekranach upewnij się, że jest ukryty, chyba że został otwarty
+    sidebar.classList.add("-translate-x-full");
+    overlay.classList.add("hidden");
+  }
+}
+
+toggleSidebarBtn.addEventListener("click", () => {
+  const isOpen = !sidebar.classList.contains("-translate-x-full");
+  sidebar.classList.toggle("-translate-x-full");
+  overlay.classList.toggle("hidden", isOpen);
+});
+
+overlay.addEventListener("click", () => {
+  sidebar.classList.add("-translate-x-full");
+  overlay.classList.add("hidden");
+});
+
+// Inicjalizacja motywu
+const storedTheme = localStorage.getItem("theme");
+const initialTheme = themes.includes(storedTheme) ? storedTheme : "light";
+currentThemeIndex = themes.indexOf(initialTheme);
+setTheme(initialTheme);
+
 // Pobranie opowiadań
 fetch("./stories.json")
   .then((response) => response.json())
@@ -230,9 +297,14 @@ fetch("./stories.json")
     stories.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sortowanie od najnowszych
     filteredStories = [...stories];
 
+    // NEW: Ensure sidebar visibility on initial load based on screen width
+    ensureSidebarVisibility();
+
     // Sprawdź hash URL po załadowaniu danych
     handleHashChange();
 
-    renderStoryList();
-    renderCurrentStory();
+    // Po załadowaniu danych, renderujemy listę i bieżące opowiadanie.
+    // handleHashChange() już to robi, więc te linie są redundantne i zostały usunięte.
+    // renderStoryList();
+    // renderCurrentStory();
   });

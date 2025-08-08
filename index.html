@@ -138,59 +138,5 @@
     <script src="./firebase-config.js"></script>
 
     <script src="./script.js"></script>
-    <script>
-      const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
-      const sidebar = document.getElementById("sidebar");
-      const overlay = document.getElementById("overlay");
-      const html = document.documentElement;
-      const themeIcon = document.getElementById("themeIcon");
-      const toggleTheme = document.getElementById("toggleTheme");
-
-      const themes = ["light", "poetic", "dark"];
-      let currentThemeIndex = 0;
-
-      function setTheme(theme) {
-        html.classList.remove("dark", "theme-poetic", "theme-light");
-        if (theme === "dark") html.classList.add("dark");
-        if (theme === "poetic") html.classList.add("theme-poetic");
-        if (theme === "light") html.classList.add("theme-light");
-        localStorage.setItem("theme", theme);
-        updateThemeIcon(theme);
-      }
-
-      function updateThemeIcon(theme) {
-        if (theme === "light") {
-          themeIcon.className = "fas fa-sun"; // czarno-biały klasyczny
-        } else if (theme === "poetic") {
-          themeIcon.className = "fas fa-feather-alt"; // poetycki
-        } else {
-          themeIcon.className = "fas fa-moon"; // ciemny
-        }
-      }
-
-      function cycleTheme() {
-        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-        setTheme(themes[currentThemeIndex]);
-      }
-
-      toggleTheme.addEventListener("click", cycleTheme);
-
-      // Inicjalizacja
-      const storedTheme = localStorage.getItem("theme");
-      const initialTheme = themes.includes(storedTheme) ? storedTheme : "light";
-      currentThemeIndex = themes.indexOf(initialTheme);
-      setTheme(initialTheme);
-
-      toggleSidebarBtn.addEventListener("click", () => {
-        const isOpen = !sidebar.classList.contains("-translate-x-full");
-        sidebar.classList.toggle("-translate-x-full");
-        overlay.classList.toggle("hidden", isOpen);
-      });
-
-      overlay.addEventListener("click", () => {
-        sidebar.classList.add("-translate-x-full");
-        overlay.classList.add("hidden");
-      });
-    </script>
   </body>
 </html>

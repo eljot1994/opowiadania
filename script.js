@@ -22,6 +22,7 @@ const toggleTheme = document.getElementById("toggleTheme");
 const themes = ["light", "poetic", "dark"];
 let currentThemeIndex = 0;
 
+  
 function formatContent(content) {
   if (content.includes("<br>") || content.includes("$")) {
     return content;

@@ -23,7 +23,7 @@ const themes = ["light", "poetic", "dark"];
 let currentThemeIndex = 0;
 
   
-function formatContent(content) {
+/*function formatContent(content) {
   if (content.includes("<br>") || content.includes("$")) {
     return content;
   }
@@ -31,7 +31,35 @@ function formatContent(content) {
     .split("\n")
     .map((line) => (line.trim() === "" ? "<br>" : `<p>${line}</p>`))
     .join("");
+}*/
+
+function formatContent(content) {
+  // Jeśli treść nie istnieje, zwróć pusty ciąg znaków.
+  if (!content) {
+    return "";
+  }
+
+  // Krok 1: Sprawdź, czy treść już zawiera znaczniki HTML (<p> lub <br>).
+  // Jeśli tak, zwróć ją bez zmian, aby nie zduplikować formatowania.
+  if (content.includes('<p>') || content.includes('<br>')) {
+    return content;
+  }
+
+  // Krok 2: Firestore podczas ręcznego wklejania mógł zamienić znak nowej linii (\n)
+  // na jego tekstową reprezentację ('\\n'). Zamieniamy ją z powrotem na prawdziwy znak nowej linii.
+  const sanitizedContent = content.replace(/\\n/g, '\n');
+
+  // Krok 3: Podziel tekst na akapity po znaku nowej linii,
+  // owiń każdy w znacznik <p> i połącz z powrotem.
+  // To jest lepsze dla stylizacji (np. wcięcia akapitowe) niż używanie <br>.
+  return sanitizedContent
+    .split('\n')
+    .map(paragraph => paragraph.trim()) // Usuń białe znaki
+    .filter(paragraph => paragraph.length > 0) // Ignoruj puste linie
+    .map(paragraph => `<p>${paragraph}</p>`) // Owiń w <p>
+    .join('');
 }
+
 
 function formatDate(dateString) {
   const date = new Date(dateString);

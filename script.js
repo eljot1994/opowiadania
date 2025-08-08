@@ -277,35 +277,29 @@ const initialTheme = themes.includes(storedTheme) ? storedTheme : "light";
 currentThemeIndex = themes.indexOf(initialTheme);
 setTheme(initialTheme);
 
-// Pobranie opowiadań
-fetch("./stories.json")
-  .then((response) => response.json())
-  .then((data) => {
-    stories = data.filter(
-      (story) =>
-        story.date &&
-        story.title &&
-        story.content &&
-        story.title.trim() &&
-        story.content.trim()
-    );
+db.collection("stories")
+  .orderBy("date", "desc") // Sortuj opowiadania od najnowszych
+  .get()
+  .then((querySnapshot) => {
+    stories = []; // Wyczyść tablicę na start
+    querySnapshot.forEach((doc) => {
+      // Pobierz dane opowiadania i dodaj jego unikalne ID z bazy
+      stories.push({ id: doc.id, ...doc.data() });
+    });
+
     if (stories.length === 0) {
       storyList.innerHTML =
         '<div class="p-4 text-sm text-gray-500">Brak opowiadań.</div>';
       storyContainer.innerHTML = "";
       return;
     }
-    stories.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sortowanie od najnowszych
+    
     filteredStories = [...stories];
-
-    // NEW: Ensure sidebar visibility on initial load based on screen width
     ensureSidebarVisibility();
-
-    // Sprawdź hash URL po załadowaniu danych
     handleHashChange();
-
-    // Po załadowaniu danych, renderujemy listę i bieżące opowiadanie.
-    // handleHashChange() już to robi, więc te linie są redundantne i zostały usunięte.
-    // renderStoryList();
-    // renderCurrentStory();
+  })
+  .catch((error) => {
+    console.error("Błąd podczas pobierania opowiadań: ", error);
+    storyList.innerHTML =
+      '<div class="p-4 text-sm text-red-500">Wystąpił błąd podczas ładowania opowiadań. Sprawdź konsolę, by dowiedzieć się więcej.</div>';
   });

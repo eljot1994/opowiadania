@@ -8,7 +8,7 @@ body {
 }
 
 /* Ustawienia dla panelu i sidebara */
-aside#sidebar, main header, #admin-panel > div {
+aside#sidebar, main header, #admin-panel > div, .p-6.rounded-lg {
   background-color: #ffffff;
   border-color: #e5e7eb;
 }
@@ -76,38 +76,32 @@ aside#sidebar, main header, #admin-panel > div {
   background-color: #d1d5db;
 }
 
-
 /* --- Style dla Podglądu w Motywie Jasnym --- */
 #preview-theme-wrapper {
   font-family: 'Georgia', serif;
   background-color: #ffffff;
   color: #000000;
 }
-
 .preview-story-date,
 .preview-story-title {
     font-family: "Cormorant Garamond", serif;
 }
-
 .preview-story-date {
     font-size: 1rem;
-    color: #374151; /* text-gray-700 */
+    color: #374151;
     margin-bottom: 0.25rem;
 }
-
 .preview-story-author {
     font-size: 1rem;
-    color: #9ca3af; /* text-gray-400 */
+    color: #9ca3af;
     margin-bottom: 0.25rem;
     font-style: italic;
 }
-
 .preview-story-title {
-    font-size: 1.875rem; /* text-3xl */
-    color: #4b5563; /* text-gray-600 */
+    font-size: 1.875rem;
+    color: #4b5563;
     margin-bottom: 1rem;
 }
-
 .preview-prose p {
   margin-bottom: 0.25em;
   text-align: justify;
@@ -116,8 +110,8 @@ aside#sidebar, main header, #admin-panel > div {
   text-indent: 1.5em;
 }
 
-/* Styl dla podglądu kodu HTML z zawijaniem wierszy */
+/* --- Styl dla podglądu kodu HTML z zawijaniem wierszy --- */
 #html-preview pre {
-  white-space: pre-wrap; /* Kluczowa zmiana: powoduje łamanie wierszy */
-  word-break: break-all; /* Opcjonalnie: łamie bardzo długie słowa */
+  white-space: pre-wrap; /* Powoduje łamanie wierszy */
+  word-break: break-all; /* Łamie bardzo długie, nieprzerwane ciągi znaków */
 }

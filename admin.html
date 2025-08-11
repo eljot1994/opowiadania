@@ -14,7 +14,7 @@
       };
     </script>
 </head>
-<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 h-screen flex overflow-hidden font-sans">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-screen flex overflow-hidden font-sans">
 
     <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
         <div class="h-16 flex items-center px-4 border-b border-gray-200 dark:border-gray-700">
@@ -30,7 +30,7 @@
 
     <main class="flex-1 flex flex-col">
         <header class="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-            <h1 class="text-lg font-semibold tracking-tight">Dodaj Nowe Opowiadanie</h1>
+            <h1 class="text-lg font-semibold tracking-tight">Zarządzaj Opowiadaniami</h1>
             <div class="flex items-center space-x-2">
                 <button id="toggleTheme" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-xl">
                     <i id="themeIcon" class="fas fa-sun"></i>
@@ -46,46 +46,47 @@
                 <p class="text-xl" style="font-family: 'Cormorant Garamond', serif;">Weryfikacja...</p>
             </div>
 
-            <div id="admin-panel" class="hidden max-w-3xl mx-auto">
-                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div id="admin-panel" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md lg:col-span-1">
                     <form id="addStoryForm">
+                        <input type="hidden" id="storyId">
+                        <h2 id="form-title" class="text-2xl font-bold mb-4" style="font-family: 'Cormorant Garamond', serif;">Dodaj Nowe Opowiadanie</h2>
                         <div class="mb-4">
-                            <label for="title" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Tytuł (Nazwa):</label>
+                            <label for="title" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Tytuł:</label>
                             <input type="text" id="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                         <div class="mb-4">
                             <label for="date" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Data:</label>
                             <input type="date" id="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
-                        <div class="mb-2">
-                            <div class="flex justify-between items-center">
-                                <label for="content" class="block text-gray-700 dark:text-gray-200 font-bold">Treść:</label>
-                                <div class="flex space-x-2">
-                                    <button type="button" id="generateIdeaBtn" class="text-sm bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded transition duration-300">✨ Wygeneruj pomysł</button>
-                                    <button type="button" id="continueWritingBtn" class="text-sm bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded transition duration-300">✨ Kontynuuj pisanie</button>
-                                </div>
-                            </div>
-                        </div>
                         <div class="mb-6">
-                            <textarea id="content" rows="15" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-relaxed" placeholder="Wpisz tutaj treść opowiadania lub wygeneruj pomysł na podstawie tytułu..." required style="font-family: 'Cormorant Garamond', serif;"></textarea>
+                             <label for="content" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Treść:</label>
+                            <textarea id="content" rows="15" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-relaxed" placeholder="Wpisz tutaj treść opowiadania..." required style="font-family: 'Cormorant Garamond', serif;"></textarea>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center space-x-4">
                             <button type="submit" id="submitBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
                                 Dodaj opowiadanie
                             </button>
+                             <button type="button" id="cancelEditBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 hidden">
+                                Anuluj edycję
+                            </button>
                         </div>
                     </form>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md lg:col-span-1">
+                    <h2 class="text-2xl font-bold mb-4" style="font-family: 'Cormorant Garamond', serif;">Istniejące Opowiadania</h2>
+                    <div id="stories-list-container" class="overflow-y-auto h-[70vh] pr-2">
+                        </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <!-- Konfiguracja i skrypt panelu -->
     <script src="./firebase-config.js"></script>
     <script src="./admin.js"></script>
 </body>

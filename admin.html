@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" href="style.css" />
+     <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 h-screen flex overflow-hidden font-sans">
 
@@ -37,12 +42,10 @@
         </header>
 
         <section class="flex-1 overflow-y-auto p-6">
-            <!-- Loader wyświetlany podczas weryfikacji -->
             <div id="loader" class="flex items-center justify-center h-full">
                 <p class="text-xl" style="font-family: 'Cormorant Garamond', serif;">Weryfikacja...</p>
             </div>
 
-            <!-- Panel admina widoczny po zalogowaniu -->
             <div id="admin-panel" class="hidden max-w-3xl mx-auto">
                  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                     <form id="addStoryForm">
@@ -54,9 +57,17 @@
                             <label for="date" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Data:</label>
                             <input type="date" id="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center">
+                                <label for="content" class="block text-gray-700 dark:text-gray-200 font-bold">Treść:</label>
+                                <div class="flex space-x-2">
+                                    <button type="button" id="generateIdeaBtn" class="text-sm bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded transition duration-300">✨ Wygeneruj pomysł</button>
+                                    <button type="button" id="continueWritingBtn" class="text-sm bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded transition duration-300">✨ Kontynuuj pisanie</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mb-6">
-                            <label for="content" class="block text-gray-700 dark:text-gray-200 font-bold mb-2">Treść:</label>
-                            <textarea id="content" rows="15" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-relaxed" placeholder="Wpisz tutaj treść opowiadania..." required style="font-family: 'Cormorant Garamond', serif;"></textarea>
+                            <textarea id="content" rows="15" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 leading-relaxed" placeholder="Wpisz tutaj treść opowiadania lub wygeneruj pomysł na podstawie tytułu..." required style="font-family: 'Cormorant Garamond', serif;"></textarea>
                         </div>
                         <div class="flex items-center">
                             <button type="submit" id="submitBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">

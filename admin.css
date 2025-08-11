@@ -115,3 +115,9 @@ aside#sidebar, main header, #admin-panel > div {
 .preview-prose p + p {
   text-indent: 1.5em;
 }
+
+/* Styl dla podglądu kodu HTML z zawijaniem wierszy */
+#html-preview pre {
+  white-space: pre-wrap; /* Kluczowa zmiana: powoduje łamanie wierszy */
+  word-break: break-all; /* Opcjonalnie: łamie bardzo długie słowa */
+}

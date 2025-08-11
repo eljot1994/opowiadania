@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const title = titleInput.value;
         const date = dateInput.value;
+        // Treść jest już sformatowana, więc po prostu ją pobieramy
         const content = editor.content.innerHTML;
         const storyId = storyIdInput.value;
 
@@ -195,46 +196,56 @@ document.addEventListener('DOMContentLoaded', () => {
         previewWrapper.classList.toggle('hidden');
     });
 
-    // --- Zaktualizowana Logika "Znajdź i zamień" ---
+    // --- ZAKTUALIZOWANA Logika "Znajdź i zamień" ---
 
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    // Funkcja formatująca <br> na <p>
+    function formatBreaksToParagraphs(htmlContent) {
+        if (!htmlContent.includes('<br')) return htmlContent;
+
+        const blocks = htmlContent.split(/<br\s*\/?>/i);
+        return blocks
+            .map(block => block.trim())
+            .filter(block => block.length > 0)
+            .map(block => {
+                if (block.startsWith('<p>') && block.endsWith('</p>')) return block;
+                return `<p>${block}</p>`;
+            })
+            .join('');
     }
 
     replaceBtn.addEventListener('click', () => {
         const findText = findInput.value;
         let replaceText = replaceInput.value;
+        if (!findText) return;
 
-        if (!findText) {
-            alert("Wpisz tekst, który chcesz znaleźć.");
-            return;
-        }
-        
-        // Sprawdź, czy użytkownik chce wstawić nową linię
-        if (replaceText === '\\n') {
-            replaceText = '<br>';
-        }
+        let isNewlineReplacement = (replaceText === '\\n');
+        if (isNewlineReplacement) replaceText = '<br>';
 
         editor.content.innerHTML = editor.content.innerHTML.replace(findText, replaceText);
+
+        if (isNewlineReplacement) {
+            editor.content.innerHTML = formatBreaksToParagraphs(editor.content.innerHTML);
+        }
     });
 
     replaceAllBtn.addEventListener('click', () => {
         const findText = findInput.value;
         let replaceText = replaceInput.value;
+        if (!findText) return;
 
-        if (!findText) {
-            alert("Wpisz tekst, który chcesz znaleźć.");
-            return;
-        }
-        
-        // Sprawdź, czy użytkownik chce wstawić nową linię
-        if (replaceText === '\\n') {
-            replaceText = '<br>';
-        }
+        let isNewlineReplacement = (replaceText === '\\n');
+        if (isNewlineReplacement) replaceText = '<br>';
 
-        const escapedFindText = escapeRegExp(findText);
-        const regex = new RegExp(escapedFindText, 'g');
+        const regex = new RegExp(escapeRegExp(findText), 'g');
         editor.content.innerHTML = editor.content.innerHTML.replace(regex, replaceText);
+
+        if (isNewlineReplacement) {
+            editor.content.innerHTML = formatBreaksToParagraphs(editor.content.innerHTML);
+        }
     });
 
     logoutBtn.addEventListener('click', () => {

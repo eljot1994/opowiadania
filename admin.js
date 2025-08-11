@@ -197,36 +197,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Zaktualizowana Logika "Znajdź i zamień" ---
 
-    // Funkcja do "ucieczki" znaków specjalnych w wyrażeniach regularnych
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // Zamień pierwsze wystąpienie
     replaceBtn.addEventListener('click', () => {
         const findText = findInput.value;
-        const replaceText = replaceInput.value;
+        let replaceText = replaceInput.value;
+
         if (!findText) {
             alert("Wpisz tekst, który chcesz znaleźć.");
             return;
         }
+        
+        // Sprawdź, czy użytkownik chce wstawić nową linię
+        if (replaceText === '\\n') {
+            replaceText = '<br>';
+        }
+
         editor.content.innerHTML = editor.content.innerHTML.replace(findText, replaceText);
     });
 
-    // Zamień wszystkie wystąpienia
     replaceAllBtn.addEventListener('click', () => {
         const findText = findInput.value;
-        const replaceText = replaceInput.value;
+        let replaceText = replaceInput.value;
+
         if (!findText) {
             alert("Wpisz tekst, który chcesz znaleźć.");
             return;
         }
-        // Używamy funkcji escapeRegExp, aby bezpiecznie stworzyć wyrażenie regularne
+        
+        // Sprawdź, czy użytkownik chce wstawić nową linię
+        if (replaceText === '\\n') {
+            replaceText = '<br>';
+        }
+
         const escapedFindText = escapeRegExp(findText);
         const regex = new RegExp(escapedFindText, 'g');
         editor.content.innerHTML = editor.content.innerHTML.replace(regex, replaceText);
     });
-
 
     logoutBtn.addEventListener('click', () => {
         firebase.auth().signOut().then(() => {

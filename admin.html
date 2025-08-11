@@ -40,7 +40,7 @@
         <header class="h-16 flex items-center justify-between px-4 border-b">
             <h1 class="text-lg font-semibold tracking-tight">Zarządzaj Opowiadaniami</h1>
             <div class="flex items-center space-x-2">
-                <button id="logoutBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                <button id="logoutBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                     Wyloguj
                 </button>
             </div>
@@ -58,11 +58,11 @@
                         <h2 id="form-title" class="text-2xl font-bold mb-4">Dodaj Nowe Opowiadanie</h2>
                         <div class="mb-4">
                             <label for="title" class="block font-bold mb-2">Tytuł:</label>
-                            <input type="text" id="title" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="text" id="title" class="shadow appearance-none border rounded w-full py-2 px-3" required>
                         </div>
                         <div class="mb-4">
                             <label for="date" class="block font-bold mb-2">Data:</label>
-                            <input type="date" id="date" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="date" id="date" class="shadow appearance-none border rounded w-full py-2 px-3" required>
                         </div>
                         <div class="mb-2">
                              <label for="editor" class="block font-bold mb-2">Treść:</label>
@@ -97,12 +97,18 @@
                             <button type="button" id="previewBtn" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                                 <i class="fas fa-eye mr-2"></i>Podgląd
                             </button>
+                            <button type="button" id="showHtmlBtn" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+                                <i class="fas fa-code mr-2"></i>Pokaż HTML
+                            </button>
                         </div>
                     </form>
                     <div id="preview-wrapper" class="hidden mt-6">
-                        <h3 class="text-lg font-bold border-b pb-2 mb-2">Podgląd (Styl: Jasny)</h3>
-                        <div id="preview-theme-wrapper" class="p-6 border rounded-lg">
+                        <h3 id="preview-title" class="text-lg font-bold border-b pb-2 mb-2">Podgląd</h3>
+                        <div id="visual-preview" class="p-6 border rounded-lg">
                             <div id="preview-story-container"></div>
+                        </div>
+                        <div id="html-preview" class="hidden">
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg text-xs overflow-auto"><code></code></pre>
                         </div>
                     </div>
                  </div>
@@ -116,8 +122,7 @@
                 <h2 class="text-xl font-bold">Istniejące Opowiadania</h2>
                 <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
             </header>
-            <div id="stories-list-container" class="overflow-y-auto p-4">
-                </div>
+            <div id="stories-list-container" class="overflow-y-auto p-4"></div>
         </div>
     </div>
 

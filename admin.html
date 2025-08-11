@@ -9,12 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/pell/dist/pell.min.css">
     <link rel="stylesheet" href="admin.css" />
-     <script>
-      // Poprawiona konfiguracja Tailwind - usunięto błędną linię 'plugins'
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
 </head>
 <body class="h-screen flex overflow-hidden">
 
@@ -51,7 +45,7 @@
 
             <div id="admin-panel" class="hidden max-w-4xl mx-auto">
                  <div class="p-6 rounded-lg shadow-md">
-                    <form id="addStoryForm">
+                    <form id="addStoryForm" onsubmit="return false;">
                         <input type="hidden" id="storyId">
                         <h2 id="form-title" class="text-2xl font-bold mb-4">Dodaj Nowe Opowiadanie</h2>
                         <div class="mb-4">

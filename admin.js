@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewWrapper = document.getElementById('preview-wrapper');
     const previewContainer = document.getElementById('preview-container');
 
+    // Elementy "Znajdź i zamień"
+    const findInput = document.getElementById('find-input');
+    const replaceInput = document.getElementById('replace-input');
+    const replaceBtn = document.getElementById('replace-btn');
+    const replaceAllBtn = document.getElementById('replace-all-btn');
+
     // --- Inicjalizacja edytora Pell ---
     const editor = pell.init({
         element: document.getElementById('editor'),
@@ -153,6 +159,34 @@ document.addEventListener('DOMContentLoaded', () => {
         previewContainer.innerHTML = contentHTML;
         previewWrapper.classList.toggle('hidden');
     });
+
+    // --- Logika "Znajdź i zamień" ---
+    replaceBtn.addEventListener('click', () => {
+        const findText = findInput.value;
+        const replaceText = replaceInput.value;
+        if (!findText) {
+            alert("Wpisz tekst, który chcesz znaleźć.");
+            return;
+        }
+        const currentContent = editor.content.innerHTML;
+        const newContent = currentContent.replace(findText, replaceText);
+        editor.content.innerHTML = newContent;
+    });
+
+    replaceAllBtn.addEventListener('click', () => {
+        const findText = findInput.value;
+        const replaceText = replaceInput.value;
+        if (!findText) {
+            alert("Wpisz tekst, który chcesz znaleźć.");
+            return;
+        }
+        const currentContent = editor.content.innerHTML;
+        // Używamy RegExp z flagą 'g' (global) do zamiany wszystkich wystąpień
+        const regex = new RegExp(findText, 'g');
+        const newContent = currentContent.replace(regex, replaceText);
+        editor.content.innerHTML = newContent;
+    });
+
 
     logoutBtn.addEventListener('click', () => {
         firebase.auth().signOut().then(() => {

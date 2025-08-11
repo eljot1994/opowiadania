@@ -2,6 +2,7 @@
   min-height: calc(100vh - 8rem);
 }
 
+
 /* Scrollbar dla sidebaru */
 #story-list::-webkit-scrollbar {
   width: 6px;

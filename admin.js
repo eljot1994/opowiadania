@@ -1,29 +1,66 @@
-// Czekaj, aż cała strona (HTML) zostanie w pełni załadowana
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Elementy DOM
     const loader = document.getElementById('loader');
     const adminPanel = document.getElementById('admin-panel');
     const addStoryForm = document.getElementById('addStoryForm');
     const logoutBtn = document.getElementById('logoutBtn');
+    const html = document.documentElement;
+    const toggleTheme = document.getElementById('toggleTheme');
+    const themeIcon = document.getElementById('themeIcon');
 
-    // Sprawdź stan uwierzytelnienia użytkownika
+    // --- Logika Motywów ---
+    const themes = ["light", "poetic", "dark"];
+    let currentThemeIndex = 0;
+
+    function setTheme(theme) {
+        html.classList.remove("dark", "theme-poetic", "theme-light");
+        if (theme === "dark") html.classList.add("dark");
+        if (theme === "poetic") html.classList.add("theme-poetic");
+        if (theme === "light") html.classList.add("theme-light");
+        localStorage.setItem("theme", theme);
+        updateThemeIcon(theme);
+    }
+
+    function updateThemeIcon(theme) {
+        if (theme === "light") {
+            themeIcon.className = "fas fa-sun";
+        } else if (theme === "poetic") {
+            themeIcon.className = "fas fa-feather-alt";
+        } else {
+            themeIcon.className = "fas fa-moon";
+        }
+    }
+
+    function cycleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        setTheme(themes[currentThemeIndex]);
+    }
+
+    toggleTheme.addEventListener('click', cycleTheme);
+
+    // Inicjalizacja motywu na starcie
+    const storedTheme = localStorage.getItem("theme");
+    const initialTheme = themes.includes(storedTheme) ? storedTheme : "poetic";
+    currentThemeIndex = themes.indexOf(initialTheme);
+    setTheme(initialTheme);
+    // --- Koniec Logiki Motywów ---
+
+
+    // --- Logika Uwierzytelniania ---
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            // Użytkownik jest zalogowany. Pokaż panel admina.
             console.log('Użytkownik zalogowany:', user.email);
             loader.style.display = 'none';
             adminPanel.style.display = 'block';
         } else {
-            // Użytkownik nie jest zalogowany. Przekieruj na stronę logowania.
             console.log('Brak zalogowanego użytkownika. Przekierowanie...');
             window.location.href = 'login.html';
         }
     });
 
-    // Logika formularza dodawania opowiadania
     addStoryForm.addEventListener('submit', function(event) {
         event.preventDefault();
-
         const title = document.getElementById('title').value;
         const date = document.getElementById('date').value;
         const content = document.getElementById('content').value;
@@ -38,11 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Dodawanie...';
         submitBtn.classList.add('bg-gray-500');
 
-        db.collection("stories").add({
-            title: title,
-            date: date,
-            content: content
-        })
+        db.collection("stories").add({ title, date, content })
         .then((docRef) => {
             console.log("Opowiadanie dodane z ID: ", docRef.id);
             alert("Opowiadanie zostało pomyślnie dodane!");
@@ -50,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch((error) => {
             console.error("Błąd podczas dodawania dokumentu: ", error);
-            alert("Wystąpił błąd podczas dodawania opowiadania. Sprawdź konsolę deweloperską.");
+            alert("Wystąpił błąd. Sprawdź konsolę.");
         })
         .finally(() => {
             submitBtn.disabled = false;
@@ -59,13 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Logika przycisku wylogowania
     logoutBtn.addEventListener('click', () => {
         firebase.auth().signOut().then(() => {
-            console.log('Wylogowano pomyślnie.');
             window.location.href = 'login.html';
-        }).catch((error) => {
-            console.error('Błąd wylogowania:', error);
         });
     });
 });

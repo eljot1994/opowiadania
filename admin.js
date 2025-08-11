@@ -135,4 +135,74 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = editor.content.innerHTML;
         const storyId = storyIdInput.value;
 
-        if (!title.trim() || !date || !content.
+        if (!title.trim() || !date || !content.trim()) {
+            alert('Tytuł, data i treść nie mogą być puste.');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        const storyData = { title, date, content };
+
+        const operation = storyId 
+            ? db.collection("stories").doc(storyId).update(storyData)
+            : db.collection("stories").add(storyData);
+
+        operation.then(() => { 
+            setAddMode(); 
+        }).finally(() => { 
+            submitBtn.disabled = false; 
+        });
+    });
+
+    // Zaktualizowana logika przycisku podglądu
+    previewBtn.addEventListener('click', () => {
+        const title = titleInput.value || "Przykładowy Tytuł";
+        const date = dateInput.value;
+        const contentHTML = editor.content.innerHTML;
+
+        if (!contentHTML.trim()) {
+            alert("Nie ma treści do podglądu.");
+            return;
+        }
+
+        const formattedDate = date ? new Date(date).toLocaleDateString("pl-PL", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        }) : "Przykładowa Data";
+
+        const author = "Jarosław Derda";
+
+        const previewStory = `
+            <div class="preview-story-date">${formattedDate}</div>
+            <div class="preview-story-author">${author}</div>
+            <div class="preview-story-title">${title}</div>
+            <div class="preview-prose">${contentHTML}</div>
+        `;
+
+        previewStoryContainer.innerHTML = previewStory;
+        previewWrapper.classList.toggle('hidden');
+    });
+
+    // Logika "Znajdź i zamień"
+    replaceBtn.addEventListener('click', () => {
+        const findText = findInput.value;
+        const replaceText = replaceInput.value;
+        if (!findText) return;
+        editor.content.innerHTML = editor.content.innerHTML.replace(findText, replaceText);
+    });
+
+    replaceAllBtn.addEventListener('click', () => {
+        const findText = findInput.value;
+        const replaceText = replaceInput.value;
+        if (!findText) return;
+        const regex = new RegExp(findText, 'g');
+        editor.content.innerHTML = editor.content.innerHTML.replace(regex, replaceText);
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        firebase.auth().signOut().then(() => {
+            window.location.href = 'login.html';
+        });
+    });
+});

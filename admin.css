@@ -75,3 +75,43 @@ aside#sidebar, main header, #admin-panel > div {
 .pell-button-selected {
   background-color: #d1d5db;
 }
+
+
+/* --- Style dla Podglądu w Motywie Jasnym --- */
+#preview-theme-wrapper {
+  font-family: 'Georgia', serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.preview-story-date,
+.preview-story-title {
+    font-family: "Cormorant Garamond", serif;
+}
+
+.preview-story-date {
+    font-size: 1rem;
+    color: #374151; /* text-gray-700 */
+    margin-bottom: 0.25rem;
+}
+
+.preview-story-author {
+    font-size: 1rem;
+    color: #9ca3af; /* text-gray-400 */
+    margin-bottom: 0.25rem;
+    font-style: italic;
+}
+
+.preview-story-title {
+    font-size: 1.875rem; /* text-3xl */
+    color: #4b5563; /* text-gray-600 */
+    margin-bottom: 1rem;
+}
+
+.preview-prose p {
+  margin-bottom: 0.25em;
+  text-align: justify;
+}
+.preview-prose p + p {
+  text-indent: 1.5em;
+}

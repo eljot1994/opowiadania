@@ -125,7 +125,7 @@ function renderCurrentStory() {
   storyContainer.innerHTML = "";
   const story = filteredStories[currentIndex];
   const storyElement = document.createElement("div");
-  storyElement.className = "story p-8 md:p-12 flex flex-col justify-center";
+  storyElement.className = "story p-8 md:p-12 flex flex-col";
   storyElement.innerHTML = `
     <div class="story-date text-l font-serif text-gray-700 dark:text-gray-200 mb-1">${formatDate(
       story.date

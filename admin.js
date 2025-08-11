@@ -5,9 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminPanel = document.getElementById('admin-panel');
     const addStoryForm = document.getElementById('addStoryForm');
     const logoutBtn = document.getElementById('logoutBtn');
-    const html = document.documentElement;
-    const toggleTheme = document.getElementById('toggleTheme');
-    const themeIcon = document.getElementById('themeIcon');
     const storiesListContainer = document.getElementById('stories-list-container');
     const storyIdInput = document.getElementById('storyId');
     const formTitle = document.getElementById('form-title');
@@ -22,17 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Inicjalizacja edytora Pell ---
     const editor = pell.init({
         element: document.getElementById('editor'),
-        onChange: () => {}, // Można dodać logikę, jeśli potrzebna
-        // Ustawia, że enter tworzy <p>
         defaultParagraphSeparator: 'p', 
         styleWithCSS: false,
-        // Definiujemy, które przyciski mają być widoczne
-        actions: [
-            'bold',
-            'italic',
-            'underline'
-        ],
-        // Tłumaczenia tooltipów
+        actions: ['bold', 'italic', 'underline'],
         classes: {
             actionbar: 'pell-actionbar',
             button: 'pell-button',
@@ -40,39 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
             selected: 'pell-button-selected'
         }
     });
-
-    // --- Logika Motywów ---
-    const themes = ["light", "poetic", "dark"];
-    let currentThemeIndex = 0;
-
-    function setTheme(theme) {
-        html.classList.remove("dark", "theme-poetic", "theme-light");
-        if (theme === "dark") html.classList.add("dark");
-        if (theme === "poetic") html.classList.add("theme-poetic");
-        if (theme === "light") html.classList.add("theme-light");
-        localStorage.setItem("theme", theme);
-        updateThemeIcon(theme);
-    }
-
-    function updateThemeIcon(theme) {
-        if (theme === "light") {
-            themeIcon.className = "fas fa-sun";
-        } else if (theme === "poetic") {
-            themeIcon.className = "fas fa-feather-alt";
-        } else {
-            themeIcon.className = "fas fa-moon";
-        }
-    }
-
-    function cycleTheme() {
-        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-        setTheme(themes[currentThemeIndex]);
-    }
-    toggleTheme.addEventListener('click', cycleTheme);
-    const storedTheme = localStorage.getItem("theme");
-    const initialTheme = themes.includes(storedTheme) ? storedTheme : "poetic";
-    currentThemeIndex = themes.indexOf(initialTheme);
-    setTheme(initialTheme);
     
     // --- Logika Uwierzytelniania ---
     firebase.auth().onAuthStateChanged(function(user) {
@@ -97,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         storyIdInput.value = story.id;
         titleInput.value = story.title;
         dateInput.value = story.date;
-        // Wypełniamy edytor Pell treścią z bazy
         editor.content.innerHTML = story.content;
     };
 
@@ -111,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         addStoryForm.reset();
         storyIdInput.value = '';
-        // Czyścimy edytor Pell
         editor.content.innerHTML = '';
     };
 
@@ -158,10 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const id = e.currentTarget.closest('button').dataset.id;
                     if (confirm('Czy na pewno chcesz usunąć to opowiadanie? Tej operacji nie można cofnąć.')) {
                         db.collection("stories").doc(id).delete().then(() => {
-                            alert('Opowiadanie usunięte!');
-                            if(storyIdInput.value === id) {
-                                setAddMode();
-                            }
+                            if(storyIdInput.value === id) { setAddMode(); }
                         });
                     }
                 });
@@ -173,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const title = titleInput.value;
         const date = dateInput.value;
-        // Pobieramy treść jako HTML z edytora Pell
         const content = editor.content.innerHTML;
         const storyId = storyIdInput.value;
 
@@ -188,29 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (storyId) {
             submitBtn.textContent = 'Zapisywanie...';
             db.collection("stories").doc(storyId).update(storyData)
-                .then(() => {
-                    alert("Opowiadanie zaktualizowane!");
-                    setAddMode();
-                }).finally(() => { submitBtn.disabled = false; });
+                .then(() => { setAddMode(); })
+                .finally(() => { submitBtn.disabled = false; });
         } else {
             submitBtn.textContent = 'Dodawanie...';
             db.collection("stories").add(storyData)
-                .then(() => {
-                    alert("Opowiadanie dodane!");
-                    setAddMode();
-                }).finally(() => { submitBtn.disabled = false; });
+                .then(() => { setAddMode(); })
+                .finally(() => { submitBtn.disabled = false; });
         }
     });
 
-    // Logika przycisku podglądu
     previewBtn.addEventListener('click', () => {
         const contentHTML = editor.content.innerHTML;
-        if (!contentHTML.trim()) {
-            alert("Nie ma treści do podglądu.");
-            return;
-        }
         previewContainer.innerHTML = contentHTML;
-        // Pokaż lub ukryj kontener podglądu
         previewWrapper.classList.toggle('hidden');
     });
 

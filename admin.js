@@ -12,9 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelEditBtn = document.getElementById('cancelEditBtn');
     const titleInput = document.getElementById('title');
     const dateInput = document.getElementById('date');
+    
+    // Elementy podglądu
     const previewBtn = document.getElementById('previewBtn');
     const previewWrapper = document.getElementById('preview-wrapper');
-    const previewContainer = document.getElementById('preview-container');
+    const previewStoryContainer = document.getElementById('preview-story-container');
 
     // Elementy "Znajdź i zamień"
     const findInput = document.getElementById('find-input');
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setEditMode = (story) => {
         formTitle.textContent = 'Edytuj Opowiadanie';
         submitBtn.textContent = 'Zapisz zmiany';
-        submitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+        submitBtn.classList.remove('bg-blue-500');
         submitBtn.classList.add('bg-green-500', 'hover:bg-green-700');
         cancelEditBtn.classList.remove('hidden');
         previewWrapper.classList.add('hidden');
@@ -65,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setAddMode = () => {
         formTitle.textContent = 'Dodaj Nowe Opowiadanie';
         submitBtn.textContent = 'Dodaj opowiadanie';
-        submitBtn.classList.remove('bg-green-500', 'hover:bg-green-700');
+        submitBtn.classList.remove('bg-green-500');
         submitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
         cancelEditBtn.classList.add('hidden');
         previewWrapper.classList.add('hidden');
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         db.collection("stories").orderBy("date", "desc").onSnapshot((querySnapshot) => {
             storiesListContainer.innerHTML = '';
             if (querySnapshot.empty) {
-                storiesListContainer.innerHTML = '<p class="text-gray-500">Brak opowiadań w bazie danych.</p>';
+                storiesListContainer.innerHTML = '<p>Brak opowiadań w bazie danych.</p>';
                 return;
             }
             querySnapshot.forEach((doc) => {
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 storyElement.innerHTML = `
                     <div>
                         <h3 class="font-bold">${story.title}</h3>
-                        <p class="text-sm text-gray-500">${story.date}</p>
+                        <p class="text-sm">${story.date}</p>
                     </div>
                     <div class="flex space-x-2">
                         <button class="edit-btn" data-id="${story.id}"><i class="fas fa-edit text-blue-500 hover:text-blue-700"></i></button>
@@ -133,64 +135,4 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = editor.content.innerHTML;
         const storyId = storyIdInput.value;
 
-        if (!title.trim() || !date || !content.trim()) {
-            alert('Tytuł, data i treść nie mogą być puste.');
-            return;
-        }
-
-        submitBtn.disabled = true;
-        const storyData = { title, date, content };
-
-        if (storyId) {
-            submitBtn.textContent = 'Zapisywanie...';
-            db.collection("stories").doc(storyId).update(storyData)
-                .then(() => { setAddMode(); })
-                .finally(() => { submitBtn.disabled = false; });
-        } else {
-            submitBtn.textContent = 'Dodawanie...';
-            db.collection("stories").add(storyData)
-                .then(() => { setAddMode(); })
-                .finally(() => { submitBtn.disabled = false; });
-        }
-    });
-
-    previewBtn.addEventListener('click', () => {
-        const contentHTML = editor.content.innerHTML;
-        previewContainer.innerHTML = contentHTML;
-        previewWrapper.classList.toggle('hidden');
-    });
-
-    // --- Logika "Znajdź i zamień" ---
-    replaceBtn.addEventListener('click', () => {
-        const findText = findInput.value;
-        const replaceText = replaceInput.value;
-        if (!findText) {
-            alert("Wpisz tekst, który chcesz znaleźć.");
-            return;
-        }
-        const currentContent = editor.content.innerHTML;
-        const newContent = currentContent.replace(findText, replaceText);
-        editor.content.innerHTML = newContent;
-    });
-
-    replaceAllBtn.addEventListener('click', () => {
-        const findText = findInput.value;
-        const replaceText = replaceInput.value;
-        if (!findText) {
-            alert("Wpisz tekst, który chcesz znaleźć.");
-            return;
-        }
-        const currentContent = editor.content.innerHTML;
-        // Używamy RegExp z flagą 'g' (global) do zamiany wszystkich wystąpień
-        const regex = new RegExp(findText, 'g');
-        const newContent = currentContent.replace(regex, replaceText);
-        editor.content.innerHTML = newContent;
-    });
-
-
-    logoutBtn.addEventListener('click', () => {
-        firebase.auth().signOut().then(() => {
-            window.location.href = 'login.html';
-        });
-    });
-});
+        if (!title.trim() || !date || !content.

@@ -13,16 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleInput = document.getElementById('title');
     const dateInput = document.getElementById('date');
     
-    // Elementy podglądu
     const previewBtn = document.getElementById('previewBtn');
     const previewWrapper = document.getElementById('preview-wrapper');
     const previewStoryContainer = document.getElementById('preview-story-container');
 
-    // Elementy "Znajdź i zamień"
     const findInput = document.getElementById('find-input');
     const replaceInput = document.getElementById('replace-input');
     const replaceBtn = document.getElementById('replace-btn');
     const replaceAllBtn = document.getElementById('replace-all-btn');
+
+    const showStoriesBtn = document.getElementById('show-stories-btn');
+    const storiesModal = document.getElementById('stories-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
 
     // --- Inicjalizacja edytora Pell ---
     const editor = pell.init({
@@ -42,10 +44,23 @@ document.addEventListener('DOMContentLoaded', () => {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             loader.style.display = 'none';
-            adminPanel.style.display = 'grid';
+            adminPanel.style.display = 'block';
             loadStories();
         } else {
             window.location.href = 'login.html';
+        }
+    });
+    
+    // --- Logika Modala ---
+    showStoriesBtn.addEventListener('click', () => {
+        storiesModal.classList.remove('hidden');
+    });
+    closeModalBtn.addEventListener('click', () => {
+        storiesModal.classList.add('hidden');
+    });
+    storiesModal.addEventListener('click', (e) => {
+        if (e.target === storiesModal) {
+            storiesModal.classList.add('hidden');
         }
     });
 
@@ -109,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     db.collection("stories").doc(id).get().then((doc) => {
                         if (doc.exists) {
                            setEditMode({ id: doc.id, ...doc.data() });
+                           storiesModal.classList.add('hidden');
                            window.scrollTo(0, 0);
                         }
                     });
@@ -154,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Zaktualizowana logika przycisku podglądu
     previewBtn.addEventListener('click', () => {
         const title = titleInput.value || "Przykładowy Tytuł";
         const date = dateInput.value;
@@ -166,39 +181,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const formattedDate = date ? new Date(date).toLocaleDateString("pl-PL", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
+            day: "numeric", month: "long", year: "numeric"
         }) : "Przykładowa Data";
 
         const author = "Jarosław Derda";
 
-        const previewStory = `
+        previewStoryContainer.innerHTML = `
             <div class="preview-story-date">${formattedDate}</div>
             <div class="preview-story-author">${author}</div>
             <div class="preview-story-title">${title}</div>
             <div class="preview-prose">${contentHTML}</div>
         `;
-
-        previewStoryContainer.innerHTML = previewStory;
         previewWrapper.classList.toggle('hidden');
     });
 
-    // Logika "Znajdź i zamień"
+    // --- Zaktualizowana Logika "Znajdź i zamień" ---
+
+    // Funkcja do "ucieczki" znaków specjalnych w wyrażeniach regularnych
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Zamień pierwsze wystąpienie
     replaceBtn.addEventListener('click', () => {
         const findText = findInput.value;
         const replaceText = replaceInput.value;
-        if (!findText) return;
+        if (!findText) {
+            alert("Wpisz tekst, który chcesz znaleźć.");
+            return;
+        }
         editor.content.innerHTML = editor.content.innerHTML.replace(findText, replaceText);
     });
 
+    // Zamień wszystkie wystąpienia
     replaceAllBtn.addEventListener('click', () => {
         const findText = findInput.value;
         const replaceText = replaceInput.value;
-        if (!findText) return;
-        const regex = new RegExp(findText, 'g');
+        if (!findText) {
+            alert("Wpisz tekst, który chcesz znaleźć.");
+            return;
+        }
+        // Używamy funkcji escapeRegExp, aby bezpiecznie stworzyć wyrażenie regularne
+        const escapedFindText = escapeRegExp(findText);
+        const regex = new RegExp(escapedFindText, 'g');
         editor.content.innerHTML = editor.content.innerHTML.replace(regex, replaceText);
     });
+
 
     logoutBtn.addEventListener('click', () => {
         firebase.auth().signOut().then(() => {

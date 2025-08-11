@@ -29,6 +29,10 @@
                 <i class="fas fa-arrow-left w-6"></i>
                 <span>Powrót do opowiadań</span>
             </a>
+            <button id="show-stories-btn" class="mt-2 flex items-center p-2 rounded hover:bg-gray-100 w-full text-left">
+                <i class="fas fa-list-ul w-6"></i>
+                <span>Lista opowiadań</span>
+            </button>
         </nav>
     </aside>
 
@@ -47,8 +51,8 @@
                 <p class="text-xl">Weryfikacja...</p>
             </div>
 
-            <div id="admin-panel" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
-                 <div class="p-6 rounded-lg shadow-md lg:col-span-1">
+            <div id="admin-panel" class="hidden max-w-4xl mx-auto">
+                 <div class="p-6 rounded-lg shadow-md">
                     <form id="addStoryForm">
                         <input type="hidden" id="storyId">
                         <h2 id="form-title" class="text-2xl font-bold mb-4">Dodaj Nowe Opowiadanie</h2>
@@ -66,7 +70,6 @@
                                 <div id="editor" class="pell"></div>
                              </div>
                         </div>
-
                         <div id="find-replace-container" class="mt-4 p-4 border rounded-lg bg-gray-50">
                             <h4 class="font-bold text-sm mb-2">Znajdź i zamień</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -84,12 +87,11 @@
                                 <button type="button" id="replace-all-btn" class="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-900">Zamień wszystko</button>
                             </div>
                         </div>
-
                         <div class="flex items-center space-x-4 mt-6">
-                            <button type="submit" id="submitBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                            <button type="submit" id="submitBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Dodaj opowiadanie
                             </button>
-                             <button type="button" id="cancelEditBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 hidden">
+                             <button type="button" id="cancelEditBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded hidden">
                                 Anuluj edycję
                             </button>
                             <button type="button" id="previewBtn" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
@@ -100,20 +102,24 @@
                     <div id="preview-wrapper" class="hidden mt-6">
                         <h3 class="text-lg font-bold border-b pb-2 mb-2">Podgląd (Styl: Jasny)</h3>
                         <div id="preview-theme-wrapper" class="p-6 border rounded-lg">
-                            <div id="preview-story-container">
-                                </div>
+                            <div id="preview-story-container"></div>
                         </div>
                     </div>
                  </div>
-
-                <div class="p-6 rounded-lg shadow-md lg:col-span-1">
-                    <h2 class="text-2xl font-bold mb-4">Istniejące Opowiadania</h2>
-                    <div id="stories-list-container" class="overflow-y-auto h-[70vh] pr-2">
-                    </div>
-                </div>
             </div>
         </section>
     </main>
+
+    <div id="stories-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <header class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Istniejące Opowiadania</h2>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </header>
+            <div id="stories-list-container" class="overflow-y-auto p-4">
+                </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>

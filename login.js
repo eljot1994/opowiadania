@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggleTheme.addEventListener('click', cycleTheme);
 
-    // Inicjalizacja motywu na starcie
     const storedTheme = localStorage.getItem("theme");
     const initialTheme = themes.includes(storedTheme) ? storedTheme : "poetic";
     currentThemeIndex = themes.indexOf(initialTheme);
@@ -51,8 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.disabled = true;
         loginBtn.textContent = 'Logowanie...';
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
+        // Ustaw trwałość sesji, aby użytkownik pozostał zalogowany
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                // Po ustawieniu trwałości, zaloguj użytkownika
+                return firebase.auth().signInWithEmailAndPassword(email, password);
+            })
+            .then(() => {
+                // Przekieruj do panelu admina po pomyślnym logowaniu
                 window.location.href = 'admin.html';
             })
             .catch((error) => {

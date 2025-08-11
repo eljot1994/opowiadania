@@ -138,7 +138,7 @@ function renderCurrentStory() {
           )}</div>`
         : ""
     }
-    <div class="text-lg md:text-xl font-serif leading-relaxed max-w-3xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
+    <div class="text-lg md:text-xl font-serif leading-relaxed max-w-6xl mx-auto text-gray-500 dark:text-gray-300 prose prose-sm prose-gray break-words">
       ${highlight(formatContent(story.content))}
     </div>
 
